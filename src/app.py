@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # ---------------------------------------------------------
-# Page Configuration & Custom Styling
+# Page Configuration & Custom Dark Dashboard Styling
 # ---------------------------------------------------------
 st.set_page_config(
     page_title="Movie Profiling & Clustering Dashboard",
@@ -14,7 +14,6 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom Dark Dashboard Theme
 st.markdown("""
 <style>
     .main {
@@ -26,14 +25,22 @@ st.markdown("""
         border-radius: 10px;
         border: 1px solid #2D3748;
     }
+    .analytics-card {
+        background-color: #1A202C;
+        padding: 20px;
+        border-radius: 12px;
+        border-left: 5px solid #6366F1;
+        margin-bottom: 25px;
+    }
     .stTabs [data-baseweb="tab-list"] {
-        gap: 10px;
+        gap: 12px;
     }
     .stTabs [data-baseweb="tab"] {
         background-color: #1E232A;
         border-radius: 8px;
-        padding: 8px 20px;
+        padding: 10px 24px;
         color: #A0AEC0;
+        font-weight: 600;
     }
     .stTabs [aria-selected="true"] {
         background-color: #4F46E5 !important;
@@ -43,27 +50,22 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ---------------------------------------------------------
-# Dataset Loader (Extracts Clean Movie Titles)
+# Dataset Loader (TMDB Dataset + Popular Tamil Blockbusters)
 # ---------------------------------------------------------
 @st.cache_data
 def load_movie_data():
     url = "https://raw.githubusercontent.com/subhampradhan/TMDB-5000-Movie-Dataset-Analysis/master/tmdb_5000_movies.csv"
     try:
-        df = pd.read_csv(url)
+        df_tmdb = pd.read_csv(url)
         cols = ['original_title', 'vote_average', 'popularity', 'runtime', 'vote_count', 'budget']
-        df = df[cols].rename(columns={'original_title': 'Movie Title'})
+        df_tmdb = df_tmdb[cols].rename(columns={'original_title': 'Movie Title'})
     except Exception:
-        # Fallback dataset with exact clean movie titles
         clean_titles = [
-            "Avatar", "Pirates of the Caribbean: At World's End", "Spectre", "The Dark Knight Rises", 
-            "John Carter", "Tangled", "Avengers: Age of Ultron", "Harry Potter and the Half-Blood Prince", 
-            "Batman v Superman: Dawn of Justice", "Superman Returns", "Quantum of Solace", 
-            "Pirates of the Caribbean: Dead Man's Chest", "The Lone Ranger", "Man of Steel", 
-            "The Chronicles of Narnia: Prince Caspian", "The Avengers", "Interstellar", "Inception",
-            "Pulp Fiction", "Forrest Gump", "The Matrix", "Gladiator", "Jurassic Park", "The Godfather"
+            "Avatar", "Spectre", "The Dark Knight Rises", "Interstellar", "Inception",
+            "The Avengers", "Titanic", "Gladiator", "Jurassic Park", "Pulp Fiction"
         ]
-        n_samples = 500
-        df = pd.DataFrame({
+        n_samples = 300
+        df_tmdb = pd.DataFrame({
             'Movie Title': np.random.choice(clean_titles, n_samples),
             'vote_average': np.random.uniform(4.0, 9.0, n_samples),
             'popularity': np.random.exponential(scale=20.0, size=n_samples),
@@ -71,7 +73,25 @@ def load_movie_data():
             'vote_count': np.random.exponential(scale=1000, size=n_samples),
             'budget': np.random.exponential(scale=30000000, size=n_samples)
         })
-    return df
+
+    # Tamil Cinema Dataset Integration
+    tamil_movies = pd.DataFrame({
+        'Movie Title': [
+            "Vikram", "Jailer", "Leo", "Master", "Sivaji: The Boss", "Enthiran",
+            "Ponniyin Selvan: Part 1", "Ponniyin Selvan: Part 2", "Kabali", "Kaithi",
+            "96", "Asuran", "Soorarai Pottru", "Jai Bhim", "Super Deluxe",
+            "Thuppakki", "Mankatha", "Anniyan", "Ghilli", "Ratsasan", "Thani Oruvan"
+        ],
+        'vote_average': [8.3, 7.2, 7.3, 7.8, 7.6, 7.1, 7.7, 7.5, 6.2, 8.5, 8.5, 8.4, 8.7, 8.8, 8.3, 8.1, 8.0, 8.3, 8.1, 8.3, 8.4],
+        'popularity': [85.4, 92.1, 98.5, 78.2, 45.6, 52.3, 68.7, 64.2, 55.1, 62.4, 42.1, 58.3, 65.2, 71.8, 48.9, 54.2, 51.0, 47.8, 43.5, 61.2, 59.8],
+        'runtime': [175, 168, 164, 179, 185, 174, 167, 164, 153, 145, 158, 141, 153, 164, 176, 165, 155, 181, 160, 170, 160],
+        'vote_count': [18500, 16200, 21000, 19400, 12000, 14500, 15800, 13200, 11500, 14200, 9800, 12400, 16500, 19800, 8900, 13100, 11800, 10500, 9200, 13800, 12600],
+        'budget': [15000000, 25000000, 35000000, 18000000, 12000000, 20000000, 60000000, 30000000, 15000000, 4000000, 2000000, 5000000, 3000000, 4000000, 2500000, 8000000, 6000000, 7000000, 3000000, 1500000, 2500000]
+    })
+
+    # Combine TMDB dataset with Tamil blockbusters
+    df_combined = pd.concat([tamil_movies, df_tmdb], ignore_index=True)
+    return df_combined
 
 df_raw = load_movie_data()
 features = ['vote_average', 'popularity', 'runtime', 'vote_count', 'budget']
@@ -104,7 +124,7 @@ def run_kmeans(X_data, k=3, max_iters=100, seed=42):
         
     return labels, centroids
 
-# SVD Dimensionality Reduction for Visual Scatter Plot
+# SVD Dimensionality Reduction for Visual 2D Plotting
 X_centered = X_scaled - np.mean(X_scaled, axis=0)
 _, _, Vh = np.linalg.svd(X_centered, full_matrices=False)
 pca_proj = np.dot(X_centered, Vh[:2].T)
@@ -121,7 +141,7 @@ st.sidebar.markdown("---")
 st.sidebar.subheader("Hyperparameter Tuning")
 k_val = st.sidebar.slider("Number of Clusters (K):", min_value=2, max_value=6, value=3)
 
-# Execute Model
+# Execute Clustering Algorithm
 labels, centroids = run_kmeans(X_scaled, k=k_val)
 df['Cluster'] = labels
 
@@ -142,7 +162,6 @@ if page == "📌 Overview & KPI":
     
     st.markdown("<br>", unsafe_allow_html=True)
     
-    # Overview Layout
     c1, c2 = st.columns([1.2, 1])
     
     with c1:
@@ -177,50 +196,84 @@ if page == "📌 Overview & KPI":
         summary_df['runtime'] = summary_df['runtime'].apply(lambda x: f"{x:.0f}m")
         st.dataframe(summary_df, use_container_width=True)
         
-        st.info("💡 **Inference Insight:** Movies are clustered automatically based on popularity, budget, ratings, and runtimes without relying on genre labels.")
+        st.info("💡 **Inference Insight:** The algorithm groups movies into high-budget blockbusters, critically acclaimed releases, and widely engaged mainstream hits automatically.")
 
 # ---------------------------------------------------------
-# PAGE 2: CLUSTER ANALYTICS
+# PAGE 2: DETAILED CLUSTER FEATURE ANALYSIS (UPGRADED)
 # ---------------------------------------------------------
 elif page == "📊 Cluster Analytics":
     st.title("📊 Detailed Cluster Feature Analysis")
-    st.write("Examine feature distributions across individual movie clusters.")
-    
-    tab1, tab2 = st.tabs(["Feature Boxplots", "Feature Correlation"])
-    
+    st.markdown("Explore multi-dimensional feature distributions, cluster profiles, and correlation heatmaps.")
+    st.markdown("---")
+
+    tab1, tab2, tab3 = st.tabs(["📈 Comparative Distributions", "🔥 Feature Correlations", "📋 Cluster Metric Profiles"])
+
+    # TAB 1: Comparative Boxplots and Violin Plots
     with tab1:
-        selected_feature = st.selectbox("Select Feature to Compare:", features)
-        fig, ax = plt.subplots(figsize=(10, 4))
+        st.markdown("<div class='analytics-card'><h4>Distribution Analysis across Clusters</h4>Examine how specific numerical features vary across each discovered movie segment.</div>", unsafe_allow_html=True)
+        
+        col_f, col_t = st.columns([2, 1])
+        with col_f:
+            selected_feature = st.selectbox("Select Feature to Analyze:", features)
+        with col_t:
+            plot_type = st.radio("Plot Style:", ["Box Plot", "Violin Plot"], horizontal=True)
+
+        fig, ax = plt.subplots(figsize=(10, 4.5))
         fig.patch.set_facecolor('#0E1117')
         ax.set_facecolor('#1A202C')
+
+        palette = ['#6366F1', '#EC4899', '#10B981', '#F59E0B', '#8B5CF6', '#3B82F6']
         
-        sns.boxplot(x='Cluster', y=selected_feature, data=df, palette='Set2', ax=ax)
-        ax.set_title(f"{selected_feature.upper()} Distribution across Clusters", color='white')
+        if plot_type == "Box Plot":
+            sns.boxplot(x='Cluster', y=selected_feature, data=df, palette=palette[:k_val], ax=ax)
+        else:
+            sns.violinplot(x='Cluster', y=selected_feature, data=df, palette=palette[:k_val], ax=ax, inner="quartile")
+
+        ax.set_title(f"{selected_feature.upper().replace('_', ' ')} Distribution per Cluster", color='white', fontsize=14, pad=12)
         ax.tick_params(colors='white')
         ax.xaxis.label.set_color('white')
         ax.yaxis.label.set_color('white')
-        ax.grid(True, color='#2D3748')
-        st.pyplot(fig)
-        
-    with tab2:
-        fig, ax = plt.subplots(figsize=(8, 5))
-        fig.patch.set_facecolor('#0E1117')
-        corr = df[features].corr()
-        sns.heatmap(corr, annot=True, cmap='coolwarm', fmt=".2f", ax=ax)
-        ax.tick_params(colors='white')
+        ax.grid(True, color='#2D3748', linestyle='--')
         st.pyplot(fig)
 
+    # TAB 2: Correlation Analysis
+    with tab2:
+        st.markdown("<div class='analytics-card'><h4>Feature Inter-Correlation Matrix</h4>Identify collinear relationships between movie popularity, vote counts, budget, and ratings.</div>", unsafe_allow_html=True)
+        
+        fig, ax = plt.subplots(figsize=(8, 5))
+        fig.patch.set_facecolor('#0E1117')
+        ax.set_facecolor('#1A202C')
+
+        corr = df[features].corr()
+        mask = np.triu(np.ones_like(corr, dtype=bool))
+        sns.heatmap(corr, mask=mask, annot=True, cmap='coolwarm', fmt=".2f", ax=ax, cbar=True,
+                    annot_kws={"size": 11, "color": "white"})
+
+        ax.tick_params(colors='white', labelsize=10)
+        plt.xticks(rotation=30)
+        st.pyplot(fig)
+
+    # TAB 3: Stat Profiles Breakdown
+    with tab3:
+        st.markdown("<div class='analytics-card'><h4>Cluster Profile Metric Breakdown</h4>Summary statistics highlighting min, median, mean, and max values across clusters.</div>", unsafe_allow_html=True)
+        
+        for c_id in range(k_val):
+            st.subheader(f"📍 Cluster {c_id} Profile Statistics")
+            cluster_data = df[df['Cluster'] == c_id][features]
+            stats = cluster_data.describe().T[['mean', 'std', 'min', '50%', 'max']].rename(columns={'50%': 'median'})
+            st.dataframe(stats.style.highlight_max(color='#2D3748'), use_container_width=True)
+
 # ---------------------------------------------------------
-# PAGE 3: MOVIE EXPLORER TABLE (REAL MOVIE TITLE SEARCH)
+# PAGE 3: MOVIE EXPLORER TABLE (SEARCH REAL & TAMIL MOVIES)
 # ---------------------------------------------------------
 elif page == "🔍 Movie Explorer":
     st.title("🔍 Interactive Movie Cluster Explorer")
-    st.write("Search for actual movie titles and view their assigned cluster profile.")
+    st.write("Search for Hollywood and Tamil movie titles to view their cluster assignment.")
     
     col_search, col_filter = st.columns([2, 1])
     
     with col_search:
-        search_query = st.text_input("🔎 Search Movie Title:", "")
+        search_query = st.text_input("🔎 Search Movie Title (e.g., Vikram, Leo, Inception):", "")
         
     with col_filter:
         cluster_filter = st.multiselect("Filter by Cluster:", options=list(range(k_val)), default=list(range(k_val)))
