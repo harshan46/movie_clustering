@@ -348,3 +348,12 @@ elif active_tab == "🔍 Movie Explorer Table":
 
     st.write(f"Showing **{len(filtered_df)}** unique movies of {len(df)} total:")
     st.dataframe(filtered_df[['Movie Title', 'Cluster_Name', 'vote_average', 'popularity', 'runtime', 'vote_count', 'budget']], use_container_width=True)
+# Convert dataset to downloadable CSV format
+csv_bytes = df.to_csv(index=False).encode('utf-8')
+
+st.download_button(
+    label="📥 Download Full Dataset (CSV)",
+    data=csv_bytes,
+    file_name="movie_clustering_dataset.csv",
+    mime="text/csv"
+)
