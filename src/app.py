@@ -22,19 +22,6 @@ st.markdown("""
         color: #E2E8F0;
     }
     
-    /* Top Header Bar */
-    .top-header {
-        background: #111622;
-        padding: 12px 24px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        border: 1px solid #1E2638;
-        margin-bottom: 20px;
-    }
-    
-    /* KPI Metric Cards */
     .kpi-card {
         background: #111622;
         padding: 16px;
@@ -54,7 +41,6 @@ st.markdown("""
         letter-spacing: 0.5px;
     }
     
-    /* Archetype Cards */
     .archetype-card {
         border-radius: 12px;
         padding: 18px;
@@ -109,9 +95,7 @@ def load_data():
 df = load_data()
 features = ['vote_average', 'popularity', 'runtime', 'vote_count', 'budget']
 
-# ---------------------------------------------------------
-# Custom K-Means Execution
-# ---------------------------------------------------------
+# Custom K-Means
 X = df[features].values
 X_mean = np.mean(X, axis=0)
 X_std = np.std(X, axis=0)
@@ -134,9 +118,16 @@ def kmeans_custom(X_data, k=4, seed=42):
     return labels
 
 df['Cluster'] = kmeans_custom(X_scaled, k=4)
+cluster_map = {
+    0: 'Cluster 0: Budget Hits',
+    1: 'Cluster 1: Mid-Tier Indie Favorites',
+    2: 'Cluster 2: Underperforming Titles',
+    3: 'Cluster 3: AAA Blockbusters'
+}
+df['Cluster_Name'] = df['Cluster'].map(cluster_map)
 
 # ---------------------------------------------------------
-# Header & Navigation Bar
+# Top Header Bar
 # ---------------------------------------------------------
 st.markdown("""
 <div style="background: #111622; padding: 14px 24px; border-radius: 10px; border: 1px solid #1E2638; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
@@ -152,205 +143,127 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# Navigation Tabs
-active_tab = st.radio("", ["📊 Overview & Metrics", "🌌 2D & 3D Feature Space", "🔍 Movie Explorer Table", "📈 Inference Report"], horizontal=True)
+# Navigation Bar
+active_tab = st.radio("", ["📊 Overview & Metrics", "🌌 2D & 3D Feature Space", "🔍 Movie Explorer Table"], horizontal=True)
 
+# ---------------------------------------------------------
+# TAB 1: OVERVIEW & METRICS
+# ---------------------------------------------------------
 if active_tab == "📊 Overview & Metrics":
-    
-    # ---------------------------------------------------------
-    # TOP KPI CARDS
-    # ---------------------------------------------------------
     k1, k2, k3, k4 = st.columns(4)
-    with k1:
-        st.markdown(f'<div class="kpi-card"><div class="kpi-val" style="color:#38BDF8;">{len(df):,}</div><div class="kpi-lbl">Aggregated Titles</div></div>', unsafe_allow_html=True)
-    with k2:
-        st.markdown('<div class="kpi-card"><div class="kpi-val" style="color:#34D399;">40.85M</div><div class="kpi-lbl">Total User Reviews</div></div>', unsafe_allow_html=True)
-    with k3:
-        st.markdown('<div class="kpi-card"><div class="kpi-val" style="color:#F59E0B;">K = 4</div><div class="kpi-lbl">WSSSE Cost: 537.02</div></div>', unsafe_allow_html=True)
-    with k4:
-        st.markdown('<div class="kpi-card"><div class="kpi-val" style="color:#10B981;">0.4663</div><div class="kpi-lbl">Peak across K ∈ [2,10]</div></div>', unsafe_allow_html=True)
+    with k1: st.markdown(f'<div class="kpi-card"><div class="kpi-val" style="color:#38BDF8;">{len(df):,}</div><div class="kpi-lbl">Aggregated Titles</div></div>', unsafe_allow_html=True)
+    with k2: st.markdown('<div class="kpi-card"><div class="kpi-val" style="color:#34D399;">40.85M</div><div class="kpi-lbl">Total User Reviews</div></div>', unsafe_allow_html=True)
+    with k3: st.markdown('<div class="kpi-card"><div class="kpi-val" style="color:#F59E0B;">K = 4</div><div class="kpi-lbl">WSSSE Cost: 537.02</div></div>', unsafe_allow_html=True)
+    with k4: st.markdown('<div class="kpi-card"><div class="kpi-val" style="color:#10B981;">0.4663</div><div class="kpi-lbl">Peak across K ∈ [2,10]</div></div>', unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
-
-    # ---------------------------------------------------------
-    # DISCOVERED GAME/MOVIE ARCHETYPES (K=4)
-    # ---------------------------------------------------------
     st.subheader("🥞 Discovered Movie Archetypes (K = 4)")
     
     c0, c1, c2, c3 = st.columns(4)
-    
     with c0:
-        st.markdown("""
-        <div class="archetype-card c0-bg">
-            <div>
-                <div style="display:flex; justify-content:space-between; font-size:11px; color:#10B981; font-weight:700;">
-                    <span>CLUSTER 0</span> <span>56 titles (17.6%)</span>
-                </div>
-                <div class="arch-title">Budget & Low-Cost Hits</div>
-                <div class="arch-desc">Extremely affordable movies with viral reach and overwhelmingly positive ratings.</div>
-            </div>
-            <div>
-                <div class="arch-stat">Avg Budget: <b>$3.12M</b> &nbsp;&nbsp;&nbsp; Rating: <b>95.6%</b></div>
-                <div class="arch-stat">Avg Runtime: <b>102m</b> &nbsp;&nbsp;&nbsp; Avg Votes: <b>43,872</b></div>
-                <div style="font-size:10px; color:#64748B; margin-top:10px;">Examples: <b>Kaithi, 96, Ratsasan</b></div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-
+        st.markdown("""<div class="archetype-card c0-bg"><div><div style="display:flex; justify-content:space-between; font-size:11px; color:#10B981; font-weight:700;"><span>CLUSTER 0</span> <span>17.6%</span></div><div class="arch-title">Budget Hits</div><div class="arch-desc">Low-budget movies with viral reach and strong positive ratings.</div></div><div><div class="arch-stat">Avg Budget: <b>$3.12M</b> &nbsp; Rating: <b>95.6%</b></div><div style="font-size:10px; color:#64748B; margin-top:10px;">Examples: <b>Kaithi, 96, Ratsasan</b></div></div></div>""", unsafe_allow_html=True)
     with c1:
-        st.markdown("""
-        <div class="archetype-card c1-bg">
-            <div>
-                <div style="display:flex; justify-content:space-between; font-size:11px; color:#3B82F6; font-weight:700;">
-                    <span>CLUSTER 1</span> <span>117 titles (36.8%)</span>
-                </div>
-                <div class="arch-title">Mid-Tier & Niche Favorites</div>
-                <div class="arch-desc">Mid-budget pricing with strong critical praise and dedicated engaged audiences.</div>
-            </div>
-            <div>
-                <div class="arch-stat">Avg Budget: <b>$22.10M</b> &nbsp;&nbsp;&nbsp; Rating: <b>86.4%</b></div>
-                <div class="arch-stat">Avg Runtime: <b>142m</b> &nbsp;&nbsp;&nbsp; Avg Votes: <b>6,638</b></div>
-                <div style="font-size:10px; color:#64748B; margin-top:10px;">Examples: <b>Soorarai Pottru, Asuran</b></div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-
+        st.markdown("""<div class="archetype-card c1-bg"><div><div style="display:flex; justify-content:space-between; font-size:11px; color:#3B82F6; font-weight:700;"><span>CLUSTER 1</span> <span>36.8%</span></div><div class="arch-title">Mid-Tier Favorites</div><div class="arch-desc">Mid-budget films with strong critical praise and steady audiences.</div></div><div><div class="arch-stat">Avg Budget: <b>$22.10M</b> &nbsp; Rating: <b>86.4%</b></div><div style="font-size:10px; color:#64748B; margin-top:10px;">Examples: <b>Soorarai Pottru, Asuran</b></div></div></div>""", unsafe_allow_html=True)
     with c2:
-        st.markdown("""
-        <div class="archetype-card c2-bg">
-            <div>
-                <div style="display:flex; justify-content:space-between; font-size:11px; color:#EF4444; font-weight:700;">
-                    <span>CLUSTER 2</span> <span>30 titles (9.4%)</span>
-                </div>
-                <div class="arch-title">Underperforming Releases</div>
-                <div class="arch-desc">Suffered poor reception, low ratings, or weak box-office performance despite budgets.</div>
-            </div>
-            <div>
-                <div class="arch-stat">Avg Budget: <b>$7.23M</b> &nbsp;&nbsp;&nbsp; Rating: <b>37.1%</b></div>
-                <div class="arch-stat">Avg Runtime: <b>128m</b> &nbsp;&nbsp;&nbsp; Avg Votes: <b>4,399</b></div>
-                <div style="font-size:10px; color:#64748B; margin-top:10px;">Examples: <b>Kabali, Quantum of Solace</b></div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-
+        st.markdown("""<div class="archetype-card c2-bg"><div><div style="display:flex; justify-content:space-between; font-size:11px; color:#EF4444; font-weight:700;"><span>CLUSTER 2</span> <span>9.4%</span></div><div class="arch-title">Underperforming Titles</div><div class="arch-desc">Suffered poor box-office reception or weak user ratings.</div></div><div><div class="arch-stat">Avg Budget: <b>$7.23M</b> &nbsp; Rating: <b>37.1%</b></div><div style="font-size:10px; color:#64748B; margin-top:10px;">Examples: <b>Kabali, Quantum of Solace</b></div></div></div>""", unsafe_allow_html=True)
     with c3:
-        st.markdown("""
-        <div class="archetype-card c3-bg">
-            <div>
-                <div style="display:flex; justify-content:space-between; font-size:11px; color:#F59E0B; font-weight:700;">
-                    <span>CLUSTER 3</span> <span>115 titles (36.2%)</span>
-                </div>
-                <div class="arch-title">AAA Blockbusters</div>
-                <div class="arch-desc">Major theatrical releases commanding premium budgets and high user engagement.</div>
-            </div>
-            <div>
-                <div class="arch-stat">Avg Budget: <b>$24.96M</b> &nbsp;&nbsp;&nbsp; Rating: <b>89.7%</b></div>
-                <div class="arch-stat">Avg Runtime: <b>168m</b> &nbsp;&nbsp;&nbsp; Avg Votes: <b>116,563</b></div>
-                <div style="font-size:10px; color:#64748B; margin-top:10px;">Examples: <b>Vikram, Leo, Jailer, Avatar</b></div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown("""<div class="archetype-card c3-bg"><div><div style="display:flex; justify-content:space-between; font-size:11px; color:#F59E0B; font-weight:700;"><span>CLUSTER 3</span> <span>36.2%</span></div><div class="arch-title">AAA Blockbusters</div><div class="arch-desc">Major theatrical releases commanding high budgets and massive engagement.</div></div><div><div class="arch-stat">Avg Budget: <b>$24.96M</b> &nbsp; Rating: <b>89.7%</b></div><div style="font-size:10px; color:#64748B; margin-top:10px;">Examples: <b>Vikram, Leo, Jailer, Avatar</b></div></div></div>""", unsafe_allow_html=True)
 
-    st.markdown("<br><br>", unsafe_allow_html=True)
-
-    # ---------------------------------------------------------
-    # MODEL OPTIMIZATION & DONUT CHART ROW
-    # ---------------------------------------------------------
+    st.markdown("<br>", unsafe_allow_html=True)
     col_left, col_right = st.columns([1.5, 1])
-
     with col_left:
-        st.markdown("<h4 style='color:#FFFFFF; margin-bottom:2px;'>📈 Model Optimization: Elbow & Silhouette Curve</h4><p style='color:#64748B; font-size:12px;'>Diminishing WSSSE cost vs. Peak silhouette separation at K=4</p>", unsafe_allow_html=True)
-        
-        # Dual-Axis Plot (Elbow Curve + Silhouette Score)
-        k_range = list(range(2, 11))
-        wssse_cost = [920, 720, 537, 460, 410, 390, 350, 310, 285]
-        silhouette_scores = [0.365, 0.418, 0.4663, 0.412, 0.425, 0.438, 0.382, 0.405, 0.412]
-
+        st.markdown("<h4 style='color:#FFFFFF;'>📈 Model Optimization: Elbow & Silhouette Curve</h4>", unsafe_allow_html=True)
         fig = make_subplots(specs=[[{"secondary_y": True}]])
-
-        # WSSSE Cost Line
-        fig.add_trace(
-            go.Scatter(
-                x=[f"K={k}" for k in k_range], y=wssse_cost, 
-                name="WSSSE Cost (Elbow Curve)",
-                line=dict(color="#38BDF8", width=3),
-                mode="lines+markers"
-            ),
-            secondary_y=False,
-        )
-
-        # Silhouette Score Line
-        fig.add_trace(
-            go.Scatter(
-                x=[f"K={k}" for k in k_range], y=silhouette_scores, 
-                name="Silhouette Score",
-                line=dict(color="#10B981", width=3),
-                mode="lines+markers"
-            ),
-            secondary_y=True,
-        )
-
-        # Highlighting Optimal Point K=4
-        fig.add_trace(
-            go.Scatter(
-                x=["K=4"], y=[537],
-                mode="markers", marker=dict(color="#F59E0B", size=14),
-                name="Optimal K=4 (Cost)"
-            ), secondary_y=False
-        )
-        fig.add_trace(
-            go.Scatter(
-                x=["K=4"], y=[0.4663],
-                mode="markers", marker=dict(color="#F59E0B", size=14),
-                name="Optimal K=4 (Silhouette)"
-            ), secondary_y=True
-        )
-
-        fig.update_layout(
-            template="plotly_dark",
-            paper_bgcolor="#111622",
-            plot_bgcolor="#111622",
-            height=380,
-            margin=dict(l=20, r=20, t=30, b=20),
-            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
-        )
-        fig.update_xaxes(showgrid=True, gridcolor="#1E2638")
-        fig.update_yaxes(title_text="WSSSE Cost", secondary_y=False, showgrid=True, gridcolor="#1E2638", title_font=dict(color="#38BDF8"))
-        fig.update_yaxes(title_text="Silhouette Score", secondary_y=True, showgrid=False, title_font=dict(color="#10B981"))
-
+        fig.add_trace(go.Scatter(x=[f"K={k}" for k in range(2, 11)], y=[920, 720, 537, 460, 410, 390, 350, 310, 285], name="WSSSE Cost", line=dict(color="#38BDF8", width=3)), secondary_y=False)
+        fig.add_trace(go.Scatter(x=[f"K={k}" for k in range(2, 11)], y=[0.365, 0.418, 0.4663, 0.412, 0.425, 0.438, 0.382, 0.405, 0.412], name="Silhouette Score", line=dict(color="#10B981", width=3)), secondary_y=True)
+        fig.update_layout(template="plotly_dark", paper_bgcolor="#111622", plot_bgcolor="#111622", height=350, margin=dict(l=20, r=20, t=30, b=20))
         st.plotly_chart(fig, use_container_width=True)
-
     with col_right:
-        st.markdown("<h4 style='color:#FFFFFF; margin-bottom:2px;'>🍰 Cluster Size Breakdown</h4><p style='color:#64748B; font-size:12px;'>318 games/movies categorized across 4 clusters</p>", unsafe_allow_html=True)
-        
-        donut_labels = [
-            'Cluster 0: Budget Hits', 
-            'Cluster 1: Mid-Tier Indie Favorites', 
-            'Cluster 2: Underperforming Titles', 
-            'Cluster 3: AAA Blockbusters'
-        ]
-        donut_values = [56, 117, 30, 115]
-        donut_colors = ['#10B981', '#2563EB', '#EF4444', '#F59E0B']
-
-        fig_donut = go.Figure(data=[go.Pie(
-            labels=donut_labels, 
-            values=donut_values, 
-            hole=.6,
-            marker_colors=donut_colors,
-            textinfo='none'
-        )])
-
-        fig_donut.update_layout(
-            template="plotly_dark",
-            paper_bgcolor="#111622",
-            plot_bgcolor="#111622",
-            height=380,
-            margin=dict(l=20, r=20, t=20, b=20),
-            legend=dict(orientation="h", yanchor="top", y=-0.05, xanchor="center", x=0.5)
-        )
-
+        st.markdown("<h4 style='color:#FFFFFF;'>🍰 Cluster Size Breakdown</h4>", unsafe_allow_html=True)
+        fig_donut = go.Figure(data=[go.Pie(labels=list(cluster_map.values()), values=[56, 117, 30, 115], hole=.6, marker_colors=['#10B981', '#2563EB', '#EF4444', '#F59E0B'])])
+        fig_donut.update_layout(template="plotly_dark", paper_bgcolor="#111622", plot_bgcolor="#111622", height=350, margin=dict(l=20, r=20, t=20, b=20))
         st.plotly_chart(fig_donut, use_container_width=True)
 
+# ---------------------------------------------------------
+# TAB 2: 2D & 3D FEATURE SPACE (EXACT MATCH FOR IMAGES)
+# ---------------------------------------------------------
+elif active_tab == "🌌 2D & 3D Feature Space":
+    
+    # 1. WebGL 3D Feature Space Plot
+    st.markdown("""
+    <div style="background: #111622; padding: 18px; border-radius: 12px; border: 1px solid #1E2638; margin-bottom: 25px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+                <span style="background: #0F294A; color: #38BDF8; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600;">🎲 Interactive WebGL 3D</span>
+                <h3 style="color: #FFFFFF; margin: 6px 0 2px 0;">3D Feature Space: Runtime vs. Rating vs. Budget</h3>
+                <p style="color: #64748B; font-size: 12px; margin:0;">Drag to rotate, scroll to zoom, hover to inspect individual movies</p>
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    fig_3d = px.scatter_3d(
+        df, x='runtime', y='vote_average', z='budget',
+        color='Cluster_Name', hover_name='Movie Title',
+        color_discrete_map={
+            'Cluster 0: Budget Hits': '#10B981',
+            'Cluster 1: Mid-Tier Indie Favorites': '#2563EB',
+            'Cluster 2: Underperforming Titles': '#EF4444',
+            'Cluster 3: AAA Blockbusters': '#F59E0B'
+        },
+        labels={'runtime': 'Runtime (Mins)', 'vote_average': 'Rating (%)', 'budget': 'Budget ($)'}
+    )
+    fig_3d.update_layout(
+        template="plotly_dark",
+        paper_bgcolor="#111622",
+        height=550,
+        margin=dict(l=10, r=10, t=10, b=10),
+        legend=dict(orientation="h", yanchor="top", y=1.05, xanchor="left", x=0)
+    )
+    st.plotly_chart(fig_3d, use_container_width=True)
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # 2. Dynamic 2D Bi-Variable Scatter Plot
+    st.markdown("""
+    <div style="background: #111622; padding: 18px; border-radius: 12px; border: 1px solid #1E2638; margin-bottom: 15px;">
+        <h3 style="color: #FFFFFF; margin: 0 0 2px 0;">📊 Dynamic 2D Bi-Variable Scatter Plot</h3>
+        <p style="color: #64748B; font-size: 12px; margin: 0;">Select custom X and Y dimensions to explore feature separation</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    col_x, col_y = st.columns(2)
+    with col_x:
+        x_axis = st.selectbox("X-Axis Feature:", features, index=2) # Runtime default
+    with col_y:
+        y_axis = st.selectbox("Y-Axis Feature:", features, index=0) # Vote average default
+
+    fig_2d = px.scatter(
+        df, x=x_axis, y=y_axis, color='Cluster_Name',
+        hover_name='Movie Title',
+        color_discrete_map={
+            'Cluster 0: Budget Hits': '#10B981',
+            'Cluster 1: Mid-Tier Indie Favorites': '#2563EB',
+            'Cluster 2: Underperforming Titles': '#EF4444',
+            'Cluster 3: AAA Blockbusters': '#F59E0B'
+        }
+    )
+    fig_2d.update_layout(
+        template="plotly_dark",
+        paper_bgcolor="#111622",
+        plot_bgcolor="#111622",
+        height=480,
+        margin=dict(l=20, r=20, t=20, b=20),
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
+    )
+    fig_2d.update_xaxes(showgrid=True, gridcolor="#1E2638")
+    fig_2d.update_yaxes(showgrid=True, gridcolor="#1E2638")
+
+    st.plotly_chart(fig_2d, use_container_width=True)
+
+# ---------------------------------------------------------
+# TAB 3: MOVIE EXPLORER TABLE
+# ---------------------------------------------------------
 elif active_tab == "🔍 Movie Explorer Table":
     st.title("🔍 Movie Search & Cluster Explorer")
-    st.dataframe(df, use_container_width=True)
+    st.dataframe(df[['Movie Title', 'Cluster_Name', 'vote_average', 'popularity', 'runtime', 'vote_count', 'budget']], use_container_width=True)
