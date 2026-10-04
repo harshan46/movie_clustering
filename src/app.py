@@ -59,6 +59,19 @@ st.markdown("""
     .arch-desc { font-size: 11px; color: #94A3B8; margin-bottom: 14px; line-height: 1.4; }
     .arch-stat { font-size: 11px; color: #CBD5E1; }
     .arch-stat b { color: #FFFFFF; }
+    
+    /* Predictor Card Styling */
+    .pred-box {
+        background: #111622;
+        padding: 24px;
+        border-radius: 12px;
+        border: 1px solid #1E2638;
+    }
+    .pred-result {
+        border-radius: 12px;
+        padding: 24px;
+        border: 1px solid #1E2638;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -115,16 +128,16 @@ def kmeans_custom(X_data, k=4, seed=42):
         ])
         if np.all(centroids == new_centroids): break
         centroids = new_centroids
-    return labels
+    return labels, centroids
 
-df['Cluster'] = kmeans_custom(X_scaled, k=4)
-cluster_map = {
-    0: 'Cluster 0: Budget Hits',
-    1: 'Cluster 1: Mid-Tier Indie Favorites',
-    2: 'Cluster 2: Underperforming Titles',
-    3: 'Cluster 3: AAA Blockbusters'
+df['Cluster'], centroids = kmeans_custom(X_scaled, k=4)
+cluster_names = {
+    0: 'Cluster 0: Budget & Low-Cost Hits',
+    1: 'Cluster 1: Mid-Tier & Niche Favorites',
+    2: 'Cluster 2: Underperforming / Poorly-Received Titles',
+    3: 'Cluster 3: AAA Pan-Indian Blockbusters'
 }
-df['Cluster_Name'] = df['Cluster'].map(cluster_map)
+df['Cluster_Name'] = df['Cluster'].map(cluster_names)
 
 # ---------------------------------------------------------
 # Top Header Bar
@@ -144,7 +157,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Navigation Bar
-active_tab = st.radio("", ["📊 Overview & Metrics", "🌌 2D & 3D Feature Space", "🔍 Movie Explorer Table"], horizontal=True)
+active_tab = st.radio("", ["📊 Overview & Metrics", "🌌 2D & 3D Feature Space", "🧪 Live Cluster Predictor", "🔍 Movie Explorer Table"], horizontal=True)
 
 # ---------------------------------------------------------
 # TAB 1: OVERVIEW & METRICS
@@ -180,89 +193,115 @@ if active_tab == "📊 Overview & Metrics":
         st.plotly_chart(fig, use_container_width=True)
     with col_right:
         st.markdown("<h4 style='color:#FFFFFF;'>🍰 Cluster Size Breakdown</h4>", unsafe_allow_html=True)
-        fig_donut = go.Figure(data=[go.Pie(labels=list(cluster_map.values()), values=[56, 117, 30, 115], hole=.6, marker_colors=['#10B981', '#2563EB', '#EF4444', '#F59E0B'])])
+        fig_donut = go.Figure(data=[go.Pie(labels=list(cluster_names.values()), values=[56, 117, 30, 115], hole=.6, marker_colors=['#10B981', '#2563EB', '#EF4444', '#F59E0B'])])
         fig_donut.update_layout(template="plotly_dark", paper_bgcolor="#111622", plot_bgcolor="#111622", height=350, margin=dict(l=20, r=20, t=20, b=20))
         st.plotly_chart(fig_donut, use_container_width=True)
 
 # ---------------------------------------------------------
-# TAB 2: 2D & 3D FEATURE SPACE (EXACT MATCH FOR IMAGES)
+# TAB 2: 2D & 3D FEATURE SPACE
 # ---------------------------------------------------------
 elif active_tab == "🌌 2D & 3D Feature Space":
-    
-    # 1. WebGL 3D Feature Space Plot
     st.markdown("""
     <div style="background: #111622; padding: 18px; border-radius: 12px; border: 1px solid #1E2638; margin-bottom: 25px;">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-            <div>
-                <span style="background: #0F294A; color: #38BDF8; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600;">🎲 Interactive WebGL 3D</span>
-                <h3 style="color: #FFFFFF; margin: 6px 0 2px 0;">3D Feature Space: Runtime vs. Rating vs. Budget</h3>
-                <p style="color: #64748B; font-size: 12px; margin:0;">Drag to rotate, scroll to zoom, hover to inspect individual movies</p>
-            </div>
-        </div>
+        <span style="background: #0F294A; color: #38BDF8; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600;">🎲 Interactive WebGL 3D</span>
+        <h3 style="color: #FFFFFF; margin: 6px 0 2px 0;">3D Feature Space: Runtime vs. Rating vs. Budget</h3>
     </div>
     """, unsafe_allow_html=True)
 
     fig_3d = px.scatter_3d(
-        df, x='runtime', y='vote_average', z='budget',
-        color='Cluster_Name', hover_name='Movie Title',
-        color_discrete_map={
-            'Cluster 0: Budget Hits': '#10B981',
-            'Cluster 1: Mid-Tier Indie Favorites': '#2563EB',
-            'Cluster 2: Underperforming Titles': '#EF4444',
-            'Cluster 3: AAA Blockbusters': '#F59E0B'
-        },
-        labels={'runtime': 'Runtime (Mins)', 'vote_average': 'Rating (%)', 'budget': 'Budget ($)'}
+        df, x='runtime', y='vote_average', z='budget', color='Cluster_Name', hover_name='Movie Title',
+        color_discrete_map={'Cluster 0: Budget & Low-Cost Hits': '#10B981', 'Cluster 1: Mid-Tier & Niche Favorites': '#2563EB', 'Cluster 2: Underperforming / Poorly-Received Titles': '#EF4444', 'Cluster 3: AAA Pan-Indian Blockbusters': '#F59E0B'}
     )
-    fig_3d.update_layout(
-        template="plotly_dark",
-        paper_bgcolor="#111622",
-        height=550,
-        margin=dict(l=10, r=10, t=10, b=10),
-        legend=dict(orientation="h", yanchor="top", y=1.05, xanchor="left", x=0)
-    )
+    fig_3d.update_layout(template="plotly_dark", paper_bgcolor="#111622", height=500, margin=dict(l=10, r=10, t=10, b=10))
     st.plotly_chart(fig_3d, use_container_width=True)
 
-    st.markdown("<br>", unsafe_allow_html=True)
-
-    # 2. Dynamic 2D Bi-Variable Scatter Plot
+# ---------------------------------------------------------
+# TAB 3: LIVE CLUSTER PREDICTOR (WHAT-IF SIMULATOR)
+# ---------------------------------------------------------
+elif active_tab == "🧪 Live Cluster Predictor":
+    
     st.markdown("""
-    <div style="background: #111622; padding: 18px; border-radius: 12px; border: 1px solid #1E2638; margin-bottom: 15px;">
-        <h3 style="color: #FFFFFF; margin: 0 0 2px 0;">📊 Dynamic 2D Bi-Variable Scatter Plot</h3>
-        <p style="color: #64748B; font-size: 12px; margin: 0;">Select custom X and Y dimensions to explore feature separation</p>
+    <div style="background: #111622; padding: 18px; border-radius: 12px; border: 1px solid #1E2638; margin-bottom: 20px;">
+        <span style="background: #0F294A; color: #38BDF8; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600;">🧪 Live K-Means Inference Engine</span>
+        <h2 style="color: #FFFFFF; margin: 6px 0 2px 0;">Interactive Cluster Predictor (What-If Simulator)</h2>
+        <p style="color: #64748B; font-size: 13px; margin:0;">Input arbitrary commercial parameters for a movie. The simulator applies feature transformation (StandardScaler) and computes Euclidean distances to the 4 cluster centroids in real-time.</p>
     </div>
     """, unsafe_allow_html=True)
 
-    col_x, col_y = st.columns(2)
-    with col_x:
-        x_axis = st.selectbox("X-Axis Feature:", features, index=2) # Runtime default
-    with col_y:
-        y_axis = st.selectbox("Y-Axis Feature:", features, index=0) # Vote average default
+    st.markdown("##### QUICK PRESETS:")
+    p1, p2, p3, p4 = st.columns(4)
+    
+    preset = None
+    if p1.button("🎬 Pan-Indian Blockbuster (e.g. Leo / Vikram)"): preset = 'blockbuster'
+    if p2.button("🎨 Critically Acclaimed Indie (e.g. 96 / Kaithi)"): preset = 'indie'
+    if p3.button("💰 Budget Hit (e.g. Ratsasan)"): preset = 'budget'
+    if p4.button("⚠️ Underperforming Launch"): preset = 'underperforming'
 
-    fig_2d = px.scatter(
-        df, x=x_axis, y=y_axis, color='Cluster_Name',
-        hover_name='Movie Title',
-        color_discrete_map={
-            'Cluster 0: Budget Hits': '#10B981',
-            'Cluster 1: Mid-Tier Indie Favorites': '#2563EB',
-            'Cluster 2: Underperforming Titles': '#EF4444',
-            'Cluster 3: AAA Blockbusters': '#F59E0B'
-        }
-    )
-    fig_2d.update_layout(
-        template="plotly_dark",
-        paper_bgcolor="#111622",
-        plot_bgcolor="#111622",
-        height=480,
-        margin=dict(l=20, r=20, t=20, b=20),
-        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
-    )
-    fig_2d.update_xaxes(showgrid=True, gridcolor="#1E2638")
-    fig_2d.update_yaxes(showgrid=True, gridcolor="#1E2638")
+    # Set Preset Values
+    if preset == 'blockbuster':
+        b_val, r_val, p_val, rt_val = 30000000.0, 8.2, 90.0, 168
+    elif preset == 'indie':
+        b_val, r_val, p_val, rt_val = 3000000.0, 8.5, 45.0, 150
+    elif preset == 'budget':
+        b_val, r_val, p_val, rt_val = 1500000.0, 8.3, 60.0, 140
+    elif preset == 'underperforming':
+        b_val, r_val, p_val, rt_val = 12000000.0, 4.2, 15.0, 130
+    else:
+        b_val, r_val, p_val, rt_val = 18000000.0, 3.5, 20.0, 145
 
-    st.plotly_chart(fig_2d, use_container_width=True)
+    col_sim, col_res = st.columns([1.2, 1])
+
+    with col_sim:
+        st.markdown('<div class="pred-box">', unsafe_allow_html=True)
+        budget_input = st.slider("Budget ($USD):", min_value=0, max_value=100000000, value=int(b_val), step=1000000)
+        rating_input = st.slider("Positive Rating (1.0 - 10.0):", min_value=1.0, max_value=10.0, value=float(r_val), step=0.1)
+        popularity_input = st.slider("Popularity Index:", min_value=1.0, max_value=200.0, value=float(p_val), step=1.0)
+        runtime_input = st.slider("Runtime (Minutes):", min_value=60, max_value=220, value=int(rt_val), step=5)
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    # Inference Math
+    user_feat = np.array([rating_input, popularity_input, runtime_input, 10000.0, budget_input])
+    user_scaled = (user_feat - X_mean) / X_std
+
+    # Euclidean Distances
+    dists = np.linalg.norm(centroids - user_scaled, axis=1)
+    closest_cluster = np.argmin(dists)
+
+    # Softmax / Confidence Proximity
+    inv_dists = 1.0 / (dists + 1e-5)
+    probs = (inv_dists / np.sum(inv_dists)) * 100
+
+    cluster_colors = {
+        0: ("#062C22", "#10B981"),
+        1: ("#0F2347", "#2563EB"),
+        2: ("#3A1018", "#EF4444"),
+        3: ("#382508", "#F59E0B")
+    }
+
+    bg_c, border_c = cluster_colors[closest_cluster]
+
+    with col_res:
+        st.markdown(f"""
+        <div class="pred-result" style="background: {bg_c}; border-top: 4px solid {border_c};">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-size:11px; color:#94A3B8; font-weight:700;">PREDICTED CLUSTER ASSIGNMENT</span>
+                <span style="background: #111622; color:#FFFFFF; padding:4px 10px; border-radius:12px; font-size:12px; font-weight:700;">Cluster {closest_cluster}</span>
+            </div>
+            <h2 style="color:#FFFFFF; margin: 10px 0 6px 0;">{cluster_names[closest_cluster].split(': ')[1]}</h2>
+            <p style="color:#CBD5E1; font-size:12px; line-height:1.4;">Classified based on standardized Euclidean metric proximity to real-time PySpark cluster centroids.</p>
+            <hr style="border-color: rgba(255,255,255,0.1); margin:15px 0;">
+            <div style="font-size:12px; font-weight:700; color:#FFFFFF; margin-bottom:10px;">Confidence by Cluster Proximity:</div>
+        """, unsafe_allow_html=True)
+
+        for cid in range(4):
+            c_name = cluster_names[cid].split(': ')[1]
+            st.write(f"**{c_name}**: `{probs[cid]:.1f}%` (dist: `{dists[cid]:.2f}`)")
+            st.progress(int(probs[cid]))
+
+        st.markdown("</div>", unsafe_allow_html=True)
 
 # ---------------------------------------------------------
-# TAB 3: MOVIE EXPLORER TABLE
+# TAB 4: MOVIE EXPLORER TABLE
 # ---------------------------------------------------------
 elif active_tab == "🔍 Movie Explorer Table":
     st.title("🔍 Movie Search & Cluster Explorer")
