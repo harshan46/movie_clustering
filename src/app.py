@@ -14,7 +14,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Dark-themed dashboard styling
+# Custom Dark Dashboard Styling
 st.markdown("""
 <style>
     .main {
@@ -25,13 +25,6 @@ st.markdown("""
         padding: 15px;
         border-radius: 10px;
         border: 1px solid #2D3748;
-    }
-    .metric-card {
-        background-color: #1A202C;
-        padding: 20px;
-        border-radius: 12px;
-        border-left: 5px solid #6366F1;
-        margin-bottom: 20px;
     }
     .stTabs [data-baseweb="tab-list"] {
         gap: 10px;
@@ -50,18 +43,27 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ---------------------------------------------------------
-# Dataset Loader
+# Dataset Loader (Extracts Real Movie Titles)
 # ---------------------------------------------------------
 @st.cache_data
 def load_movie_data():
     url = "https://raw.githubusercontent.com/subhampradhan/TMDB-5000-Movie-Dataset-Analysis/master/tmdb_5000_movies.csv"
     try:
         df = pd.read_csv(url)
+        # Select title along with clustering features
+        cols = ['original_title', 'vote_average', 'popularity', 'runtime', 'vote_count', 'budget']
+        df = df[cols].rename(columns={'original_title': 'Movie Title'})
     except Exception:
+        # Fallback dataset with realistic movie titles
         np.random.seed(42)
+        sample_titles = [
+            "The Dark Knight", "Inception", "Interstellar", "Avatar", "Titanic", 
+            "The Avengers", "Pulp Fiction", "Forrest Gump", "The Matrix", "Gladiator",
+            "Jurassic Park", "The Godfather", "Schindler's List", "Fight Club", "Goodfellas"
+        ]
         n_samples = 500
         df = pd.DataFrame({
-            'title': [f'Movie {i}' for i in range(1, n_samples + 1)],
+            'Movie Title': np.random.choice(sample_titles, n_samples) + " " + np.random.randint(1, 100, n_samples).astype(str),
             'vote_average': np.random.uniform(4.0, 9.0, n_samples),
             'popularity': np.random.exponential(scale=20.0, size=n_samples),
             'runtime': np.random.normal(110, 20, n_samples),
@@ -72,7 +74,7 @@ def load_movie_data():
 
 df_raw = load_movie_data()
 features = ['vote_average', 'popularity', 'runtime', 'vote_count', 'budget']
-df = df_raw.dropna(subset=features).copy().reset_index(drop=True)
+df = df_raw.dropna(subset=features + ['Movie Title']).copy().reset_index(drop=True)
 
 # ---------------------------------------------------------
 # Custom K-Means & Standardization Engine
@@ -101,7 +103,7 @@ def run_kmeans(X_data, k=3, max_iters=100, seed=42):
         
     return labels, centroids
 
-# SVD Dimensionality Reduction for 2D Plotting
+# SVD Dimensionality Reduction for Visual Scatter Plot
 X_centered = X_scaled - np.mean(X_scaled, axis=0)
 _, _, Vh = np.linalg.svd(X_centered, full_matrices=False)
 pca_proj = np.dot(X_centered, Vh[:2].T)
@@ -111,9 +113,7 @@ df['PCA2'] = pca_proj[:, 1]
 # ---------------------------------------------------------
 # Sidebar Controls & Navigation
 # ---------------------------------------------------------
-st.sidebar.image("https://img.icons8.com/fluency/96/movie-projector.png", width=80)
-st.sidebar.title("Navigation & Controls")
-
+st.sidebar.title("🎬 Movie Clustering")
 page = st.sidebar.radio("Go to Section:", ["📌 Overview & KPI", "📊 Cluster Analytics", "🔍 Movie Explorer"])
 st.sidebar.markdown("---")
 
@@ -176,10 +176,10 @@ if page == "📌 Overview & KPI":
         summary_df['runtime'] = summary_df['runtime'].apply(lambda x: f"{x:.0f}m")
         st.dataframe(summary_df, use_container_width=True)
         
-        st.info("💡 **Inference Insight:** K-Means segments movies into high-budget blockbusters, critically acclaimed fan favorites, and standard mainstream releases based on metadata patterns.")
+        st.info("💡 **Inference Insight:** Movies are clustered based on popularity, budget, ratings, and runtimes without relying on genre labels.")
 
 # ---------------------------------------------------------
-# PAGE 2: CLUSTER ANALYTICS & FEATURE COMPARISON
+# PAGE 2: CLUSTER ANALYTICS
 # ---------------------------------------------------------
 elif page == "📊 Cluster Analytics":
     st.title("📊 Detailed Cluster Feature Analysis")
@@ -210,14 +210,24 @@ elif page == "📊 Cluster Analytics":
         st.pyplot(fig)
 
 # ---------------------------------------------------------
-# PAGE 3: MOVIE EXPLORER TABLE
+# PAGE 3: MOVIE EXPLORER TABLE (SEARCH BY REAL MOVIE TITLE)
 # ---------------------------------------------------------
 elif page == "🔍 Movie Explorer":
     st.title("🔍 Interactive Movie Cluster Explorer")
-    st.write("Filter and search through individual movies categorized by their cluster assignment.")
+    st.write("Search for actual movie titles and view their assigned cluster profile.")
     
-    cluster_filter = st.multiselect("Filter by Cluster:", options=list(range(k_val)), default=list(range(k_val)))
+    col_search, col_filter = st.columns([2, 1])
+    
+    with col_search:
+        search_query = st.text_input("🔎 Search Movie Title:", "")
+        
+    with col_filter:
+        cluster_filter = st.multiselect("Filter by Cluster:", options=list(range(k_val)), default=list(range(k_val)))
+        
+    # Apply Filters
     filtered_df = df[df['Cluster'].isin(cluster_filter)]
-    
-    display_cols = ['title', 'Cluster', 'vote_average', 'popularity', 'runtime', 'vote_count', 'budget'] if 'title' in df.columns else ['Cluster'] + features
+    if search_query:
+        filtered_df = filtered_df[filtered_df['Movie Title'].str.contains(search_query, case=False, na=False)]
+        
+    display_cols = ['Movie Title', 'Cluster', 'vote_average', 'popularity', 'runtime', 'vote_count', 'budget']
     st.dataframe(filtered_df[display_cols], use_container_width=True)
