@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import plotly.express as px
 
 # ---------------------------------------------------------
 # Page Configuration & Custom Dark Dashboard Styling
@@ -89,7 +90,6 @@ def load_movie_data():
         'budget': [15000000, 25000000, 35000000, 18000000, 12000000, 20000000, 60000000, 30000000, 15000000, 4000000, 2000000, 5000000, 3000000, 4000000, 2500000, 8000000, 6000000, 7000000, 3000000, 1500000, 2500000]
     })
 
-    # Combine TMDB dataset with Tamil blockbusters
     df_combined = pd.concat([tamil_movies, df_tmdb], ignore_index=True)
     return df_combined
 
@@ -144,6 +144,7 @@ k_val = st.sidebar.slider("Number of Clusters (K):", min_value=2, max_value=6, v
 # Execute Clustering Algorithm
 labels, centroids = run_kmeans(X_scaled, k=k_val)
 df['Cluster'] = labels
+df['Cluster_Str'] = df['Cluster'].astype(str)
 
 # ---------------------------------------------------------
 # PAGE 1: OVERVIEW & KEY METRICS
@@ -153,7 +154,6 @@ if page == "📌 Overview & KPI":
     st.caption("Big Data Analytics Assignment | Unsupervised Machine Learning Pipeline")
     st.markdown("---")
     
-    # KPI Row
     col1, col2, col3, col4 = st.columns(4)
     col1.metric("Total Movies Analyzed", f"{len(df):,}")
     col2.metric("Selected Features", f"{len(features)}")
@@ -166,25 +166,14 @@ if page == "📌 Overview & KPI":
     
     with c1:
         st.subheader("2D Projection Space (SVD / PCA)")
-        fig, ax = plt.subplots(figsize=(8, 5))
-        fig.patch.set_facecolor('#0E1117')
-        ax.set_facecolor('#1A202C')
-        
-        colors = ['#6366F1', '#EC4899', '#10B981', '#F59E0B', '#8B5CF6', '#3B82F6']
-        for i in range(k_val):
-            cluster_subset = df[df['Cluster'] == i]
-            ax.scatter(
-                cluster_subset['PCA1'], cluster_subset['PCA2'], 
-                label=f'Cluster {i}', color=colors[i % len(colors)], 
-                alpha=0.7, s=40
-            )
-            
-        ax.set_xlabel("Component 1", color='white')
-        ax.set_ylabel("Component 2", color='white')
-        ax.tick_params(colors='white')
-        ax.legend(facecolor='#1A202C', edgecolor='none', labelcolor='white')
-        ax.grid(True, color='#2D3748', linestyle='--')
-        st.pyplot(fig)
+        fig_pca = px.scatter(
+            df, x='PCA1', y='PCA2', color='Cluster_Str',
+            hover_name='Movie Title', hover_data=['vote_average', 'popularity', 'budget'],
+            color_discrete_sequence=px.colors.qualitative.Bold,
+            labels={'Cluster_Str': 'Cluster', 'PCA1': 'Component 1', 'PCA2': 'Component 2'}
+        )
+        fig_pca.update_layout(template="plotly_dark", height=450, margin=dict(l=20, r=20, t=30, b=20))
+        st.plotly_chart(fig_pca, use_container_width=True)
         
     with c2:
         st.subheader("Cluster Profile Means")
@@ -196,21 +185,21 @@ if page == "📌 Overview & KPI":
         summary_df['runtime'] = summary_df['runtime'].apply(lambda x: f"{x:.0f}m")
         st.dataframe(summary_df, use_container_width=True)
         
-        st.info("💡 **Inference Insight:** The algorithm groups movies into high-budget blockbusters, critically acclaimed releases, and widely engaged mainstream hits automatically.")
+        st.info("💡 **Inference Insight:** Movies are clustered automatically based on popularity, budget, ratings, and runtimes without relying on genre labels.")
 
 # ---------------------------------------------------------
-# PAGE 2: DETAILED CLUSTER FEATURE ANALYSIS (UPGRADED)
+# PAGE 2: INTERACTIVE CLUSTER FEATURE ANALYTICS (PLOTLY)
 # ---------------------------------------------------------
 elif page == "📊 Cluster Analytics":
     st.title("📊 Detailed Cluster Feature Analysis")
-    st.markdown("Explore multi-dimensional feature distributions, cluster profiles, and correlation heatmaps.")
+    st.markdown("Explore multi-dimensional feature distributions with interactive hover tooltips and metric cards.")
     st.markdown("---")
 
-    tab1, tab2, tab3 = st.tabs(["📈 Comparative Distributions", "🔥 Feature Correlations", "📋 Cluster Metric Profiles"])
+    tab1, tab2, tab3 = st.tabs(["📈 Interactive Distributions", "🔥 Feature Correlations", "📋 Cluster Metric Profiles"])
 
-    # TAB 1: Comparative Boxplots and Violin Plots
+    # TAB 1: Interactive Plotly Box Plots & Violin Plots
     with tab1:
-        st.markdown("<div class='analytics-card'><h4>Distribution Analysis across Clusters</h4>Examine how specific numerical features vary across each discovered movie segment.</div>", unsafe_allow_html=True)
+        st.markdown("<div class='analytics-card'><h4>Interactive Distribution Analysis</h4>Hover over boxes or data points to see individual movie titles, medians, quartiles, and outliers.</div>", unsafe_allow_html=True)
         
         col_f, col_t = st.columns([2, 1])
         with col_f:
@@ -218,40 +207,44 @@ elif page == "📊 Cluster Analytics":
         with col_t:
             plot_type = st.radio("Plot Style:", ["Box Plot", "Violin Plot"], horizontal=True)
 
-        fig, ax = plt.subplots(figsize=(10, 4.5))
-        fig.patch.set_facecolor('#0E1117')
-        ax.set_facecolor('#1A202C')
-
-        palette = ['#6366F1', '#EC4899', '#10B981', '#F59E0B', '#8B5CF6', '#3B82F6']
-        
         if plot_type == "Box Plot":
-            sns.boxplot(x='Cluster', y=selected_feature, data=df, palette=palette[:k_val], ax=ax)
+            fig_dist = px.box(
+                df, x='Cluster_Str', y=selected_feature, color='Cluster_Str',
+                hover_name='Movie Title', points="all",
+                color_discrete_sequence=px.colors.qualitative.Bold,
+                labels={'Cluster_Str': 'Cluster', selected_feature: selected_feature.upper().replace('_', ' ')}
+            )
         else:
-            sns.violinplot(x='Cluster', y=selected_feature, data=df, palette=palette[:k_val], ax=ax, inner="quartile")
+            fig_dist = px.violin(
+                df, x='Cluster_Str', y=selected_feature, color='Cluster_Str',
+                hover_name='Movie Title', box=True, points="all",
+                color_discrete_sequence=px.colors.qualitative.Bold,
+                labels={'Cluster_Str': 'Cluster', selected_feature: selected_feature.upper().replace('_', ' ')}
+            )
 
-        ax.set_title(f"{selected_feature.upper().replace('_', ' ')} Distribution per Cluster", color='white', fontsize=14, pad=12)
-        ax.tick_params(colors='white')
-        ax.xaxis.label.set_color('white')
-        ax.yaxis.label.set_color('white')
-        ax.grid(True, color='#2D3748', linestyle='--')
-        st.pyplot(fig)
+        fig_dist.update_layout(
+            template="plotly_dark",
+            height=500,
+            showlegend=False,
+            xaxis_title="Cluster Assignment",
+            yaxis_title=selected_feature.upper().replace('_', ' '),
+            margin=dict(l=20, r=20, t=30, b=20)
+        )
+        st.plotly_chart(fig_dist, use_container_width=True)
 
-    # TAB 2: Correlation Analysis
+    # TAB 2: Interactive Heatmap
     with tab2:
-        st.markdown("<div class='analytics-card'><h4>Feature Inter-Correlation Matrix</h4>Identify collinear relationships between movie popularity, vote counts, budget, and ratings.</div>", unsafe_allow_html=True)
+        st.markdown("<div class='analytics-card'><h4>Feature Inter-Correlation Matrix</h4>Identify relationships between movie popularity, vote counts, budget, and user ratings.</div>", unsafe_allow_html=True)
         
-        fig, ax = plt.subplots(figsize=(8, 5))
-        fig.patch.set_facecolor('#0E1117')
-        ax.set_facecolor('#1A202C')
-
-        corr = df[features].corr()
-        mask = np.triu(np.ones_like(corr, dtype=bool))
-        sns.heatmap(corr, mask=mask, annot=True, cmap='coolwarm', fmt=".2f", ax=ax, cbar=True,
-                    annot_kws={"size": 11, "color": "white"})
-
-        ax.tick_params(colors='white', labelsize=10)
-        plt.xticks(rotation=30)
-        st.pyplot(fig)
+        corr = df[features].corr().round(2)
+        fig_corr = px.imshow(
+            corr, text_auto=True, color_continuous_scale="Viridis",
+            labels=dict(color="Correlation"),
+            x=[f.upper().replace('_', ' ') for f in features],
+            y=[f.upper().replace('_', ' ') for f in features]
+        )
+        fig_corr.update_layout(template="plotly_dark", height=480, margin=dict(l=20, r=20, t=30, b=20))
+        st.plotly_chart(fig_corr, use_container_width=True)
 
     # TAB 3: Stat Profiles Breakdown
     with tab3:
@@ -264,7 +257,7 @@ elif page == "📊 Cluster Analytics":
             st.dataframe(stats.style.highlight_max(color='#2D3748'), use_container_width=True)
 
 # ---------------------------------------------------------
-# PAGE 3: MOVIE EXPLORER TABLE (SEARCH REAL & TAMIL MOVIES)
+# PAGE 3: MOVIE EXPLORER TABLE
 # ---------------------------------------------------------
 elif page == "🔍 Movie Explorer":
     st.title("🔍 Interactive Movie Cluster Explorer")
@@ -278,7 +271,6 @@ elif page == "🔍 Movie Explorer":
     with col_filter:
         cluster_filter = st.multiselect("Filter by Cluster:", options=list(range(k_val)), default=list(range(k_val)))
         
-    # Apply Filters
     filtered_df = df[df['Cluster'].isin(cluster_filter)]
     if search_query:
         filtered_df = filtered_df[filtered_df['Movie Title'].str.contains(search_query, case=False, na=False)]
