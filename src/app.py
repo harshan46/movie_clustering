@@ -76,7 +76,6 @@ st.markdown("""
 # ---------------------------------------------------------
 @st.cache_data
 def load_movie_data():
-    # Exhaustive list of 250+ distinct, unique Tamil movie titles
     unique_tamil_titles = [
         "Vikram", "Jailer", "Leo", "Master", "Sivaji: The Boss", "Enthiran", "Ponniyin Selvan: Part 1",
         "Ponniyin Selvan: Part 2", "Kabali", "Kaithi", "96", "Asuran", "Soorarai Pottru", "Jai Bhim",
@@ -112,7 +111,6 @@ def load_movie_data():
         "Meiyazhagan", "Black", "Bloody Beggar", "Brother", "Amaran", "Game Changer"
     ]
 
-    # Ensure deduplication
     titles = list(dict.fromkeys(unique_tamil_titles))
     n_total = len(titles)
 
@@ -147,7 +145,7 @@ with col_title:
     <div style="background: #111622; padding: 14px 20px; border-radius: 10px; border: 1px solid #1E2638;">
         <span style="font-size: 20px; font-weight: 800; color: #FFFFFF;">🎬 Movie Clustering</span> 
         <span style="background: #064E3B; color: #34D399; padding: 3px 8px; border-radius: 6px; font-size: 11px; margin-left: 10px; font-weight: 600;">PySpark MLlib</span>
-        <div style="font-size: 11px; color: #64748B; margin-top: 2px;">Unique Tamil Movies Analyzed • Unsupervised Machine Learning Pipeline</div>
+        <div style="font-size: 11px; color: #64748B; margin-top: 2px;">Unique Movies Analyzed • Unsupervised Machine Learning Pipeline</div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -249,6 +247,69 @@ if active_tab == "📊 Overview & Metrics":
         fig_donut.update_layout(template="plotly_dark", paper_bgcolor="#111622", plot_bgcolor="#111622", height=350, margin=dict(l=20, r=20, t=20, b=20))
         st.plotly_chart(fig_donut, use_container_width=True)
 
+    # ---------------------------------------------------------
+    # NEW CARD: CLUSTER FEATURE PROFILES COMPARISON BAR CHART
+    # ---------------------------------------------------------
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown("""
+    <div style="background: #111622; padding: 18px; border-radius: 12px; border: 1px solid #1E2638; margin-bottom: 20px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+                <h3 style="color: #FFFFFF; margin: 0 0 2px 0;">📊 Cluster Feature Profiles Comparison</h3>
+                <p style="color: #64748B; font-size: 12px; margin:0;">Compare Budget, Rating, Popularity Reviews, and Runtime across clusters</p>
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    col_bar_ctrl, _ = st.columns([1, 2])
+    with col_bar_ctrl:
+        metric_opt = st.selectbox(
+            "Metric:", 
+            ["Average Runtime (Minutes)", "Average Budget ($M)", "Average Rating (out of 10)", "Average Popularity Score"]
+        )
+
+    # Compute Means
+    cluster_means = df.groupby('Cluster_Name')[features].mean().reset_index()
+
+    if metric_opt == "Average Runtime (Minutes)":
+        y_col = 'runtime'
+        y_title = "Runtime (Minutes)"
+    elif metric_opt == "Average Budget ($M)":
+        cluster_means['budget_m'] = cluster_means['budget'] / 1e6
+        y_col = 'budget_m'
+        y_title = "Budget ($ Millions)"
+    elif metric_opt == "Average Rating (out of 10)":
+        y_col = 'vote_average'
+        y_title = "Rating Score"
+    else:
+        y_col = 'popularity'
+        y_title = "Popularity Score"
+
+    fig_bar = px.bar(
+        cluster_means, 
+        x='Cluster_Name', 
+        y=y_col, 
+        color='Cluster_Name',
+        color_discrete_map=color_map,
+        text_auto='.1f',
+        labels={'Cluster_Name': 'Cluster', y_col: y_title}
+    )
+
+    fig_bar.update_layout(
+        template="plotly_dark",
+        paper_bgcolor="#111622",
+        plot_bgcolor="#111622",
+        height=400,
+        showlegend=False,
+        margin=dict(l=20, r=20, t=30, b=20)
+    )
+    fig_bar.update_traces(textposition='outside')
+    fig_bar.update_xaxes(showgrid=False)
+    fig_bar.update_yaxes(showgrid=True, gridcolor="#1E2638")
+
+    st.plotly_chart(fig_bar, use_container_width=True)
+
 # ---------------------------------------------------------
 # TAB 2: 2D & 3D FEATURE SPACE
 # ---------------------------------------------------------
@@ -331,7 +392,7 @@ elif active_tab == "🧪 Live Cluster Predictor":
         st.markdown("</div>", unsafe_allow_html=True)
 
 # ---------------------------------------------------------
-# TAB 4: MOVIE EXPLORER TABLE
+# TAB 4: MOVIE EXPLORER TABLE (300+ MOVIES)
 # ---------------------------------------------------------
 elif active_tab == "🔍 Movie Explorer Table":
     st.title("🔍 Search & Filter Unique Movies")
@@ -347,13 +408,14 @@ elif active_tab == "🔍 Movie Explorer Table":
         filtered_df = filtered_df[filtered_df['Movie Title'].str.contains(search, case=False, na=False)]
 
     st.write(f"Showing **{len(filtered_df)}** unique movies of {len(df)} total:")
+    
+    # Download dataset button
+    csv_data = filtered_df.to_csv(index=False).encode('utf-8')
+    st.download_button(
+        label="📥 Download Filtered Dataset (CSV)",
+        data=csv_data,
+        file_name="movie_clustering_dataset.csv",
+        mime="text/csv",
+    )
+    
     st.dataframe(filtered_df[['Movie Title', 'Cluster_Name', 'vote_average', 'popularity', 'runtime', 'vote_count', 'budget']], use_container_width=True)
-# Convert dataset to downloadable CSV format
-csv_bytes = df.to_csv(index=False).encode('utf-8')
-
-st.download_button(
-    label="📥 Download Full Dataset (CSV)",
-    data=csv_bytes,
-    file_name="movie_clustering_dataset.csv",
-    mime="text/csv"
-)
