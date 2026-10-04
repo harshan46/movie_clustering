@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # ---------------------------------------------------------
-# Page Configuration & Custom CSS Styling
+# Page Configuration & Custom Styling
 # ---------------------------------------------------------
 st.set_page_config(
     page_title="Movie Profiling & Clustering Dashboard",
@@ -14,7 +14,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom Dark Dashboard Styling
+# Custom Dark Dashboard Theme
 st.markdown("""
 <style>
     .main {
@@ -43,27 +43,28 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ---------------------------------------------------------
-# Dataset Loader (Extracts Real Movie Titles)
+# Dataset Loader (Extracts Clean Movie Titles)
 # ---------------------------------------------------------
 @st.cache_data
 def load_movie_data():
     url = "https://raw.githubusercontent.com/subhampradhan/TMDB-5000-Movie-Dataset-Analysis/master/tmdb_5000_movies.csv"
     try:
         df = pd.read_csv(url)
-        # Select title along with clustering features
         cols = ['original_title', 'vote_average', 'popularity', 'runtime', 'vote_count', 'budget']
         df = df[cols].rename(columns={'original_title': 'Movie Title'})
     except Exception:
-        # Fallback dataset with realistic movie titles
-        np.random.seed(42)
-        sample_titles = [
-            "The Dark Knight", "Inception", "Interstellar", "Avatar", "Titanic", 
-            "The Avengers", "Pulp Fiction", "Forrest Gump", "The Matrix", "Gladiator",
-            "Jurassic Park", "The Godfather", "Schindler's List", "Fight Club", "Goodfellas"
+        # Fallback dataset with exact clean movie titles
+        clean_titles = [
+            "Avatar", "Pirates of the Caribbean: At World's End", "Spectre", "The Dark Knight Rises", 
+            "John Carter", "Tangled", "Avengers: Age of Ultron", "Harry Potter and the Half-Blood Prince", 
+            "Batman v Superman: Dawn of Justice", "Superman Returns", "Quantum of Solace", 
+            "Pirates of the Caribbean: Dead Man's Chest", "The Lone Ranger", "Man of Steel", 
+            "The Chronicles of Narnia: Prince Caspian", "The Avengers", "Interstellar", "Inception",
+            "Pulp Fiction", "Forrest Gump", "The Matrix", "Gladiator", "Jurassic Park", "The Godfather"
         ]
         n_samples = 500
         df = pd.DataFrame({
-            'Movie Title': np.random.choice(sample_titles, n_samples) + " " + np.random.randint(1, 100, n_samples).astype(str),
+            'Movie Title': np.random.choice(clean_titles, n_samples),
             'vote_average': np.random.uniform(4.0, 9.0, n_samples),
             'popularity': np.random.exponential(scale=20.0, size=n_samples),
             'runtime': np.random.normal(110, 20, n_samples),
@@ -167,7 +168,7 @@ if page == "📌 Overview & KPI":
         st.pyplot(fig)
         
     with c2:
-        st.subheader("Cluster Profile Profiles")
+        st.subheader("Cluster Profile Means")
         summary_df = df.groupby('Cluster')[features].mean().reset_index()
         summary_df['budget'] = summary_df['budget'].apply(lambda x: f"${x/1e6:.1f}M")
         summary_df['vote_count'] = summary_df['vote_count'].apply(lambda x: f"{x:.0f}")
@@ -176,7 +177,7 @@ if page == "📌 Overview & KPI":
         summary_df['runtime'] = summary_df['runtime'].apply(lambda x: f"{x:.0f}m")
         st.dataframe(summary_df, use_container_width=True)
         
-        st.info("💡 **Inference Insight:** Movies are clustered based on popularity, budget, ratings, and runtimes without relying on genre labels.")
+        st.info("💡 **Inference Insight:** Movies are clustered automatically based on popularity, budget, ratings, and runtimes without relying on genre labels.")
 
 # ---------------------------------------------------------
 # PAGE 2: CLUSTER ANALYTICS
@@ -210,7 +211,7 @@ elif page == "📊 Cluster Analytics":
         st.pyplot(fig)
 
 # ---------------------------------------------------------
-# PAGE 3: MOVIE EXPLORER TABLE (SEARCH BY REAL MOVIE TITLE)
+# PAGE 3: MOVIE EXPLORER TABLE (REAL MOVIE TITLE SEARCH)
 # ---------------------------------------------------------
 elif page == "🔍 Movie Explorer":
     st.title("🔍 Interactive Movie Cluster Explorer")
