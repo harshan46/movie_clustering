@@ -1,0 +1,220 @@
+Movie Title,vote_average,popularity,runtime,vote_count,budget,Cluster,Cluster_Name
+Vikram,6.9,76.2,141,4486,8200000.0,0,Cluster 0
+Jailer,9.0,47.5,154,14068,12000000.0,3,Cluster 3
+Leo,8.2,39.4,123,5126,1700000.0,1,Cluster 1
+Master,7.7,13.4,124,4284,3700000.0,1,Cluster 1
+Sivaji: The Boss,6.1,26.0,137,5469,21100000.0,1,Cluster 1
+Enthiran,6.1,20.8,146,3369,2300000.0,1,Cluster 1
+Ponniyin Selvan: Part 1,5.7,19.8,155,11514,14900000.0,1,Cluster 1
+Ponniyin Selvan: Part 2,8.7,136.4,176,6088,5200000.0,0,Cluster 0
+Kabali,7.7,27.5,165,2613,8400000.0,3,Cluster 3
+Kaithi,8.1,87.9,147,18886,6100000.0,0,Cluster 0
+96,5.6,44.9,149,4374,7600000.0,1,Cluster 1
+Asuran,9.1,65.4,131,6774,20000000.0,3,Cluster 3
+Soorarai Pottru,8.6,34.4,149,19455,6300000.0,3,Cluster 3
+Jai Bhim,6.3,40.1,144,8330,13500000.0,1,Cluster 1
+Super Deluxe,6.2,33.7,155,1494,10700000.0,1,Cluster 1
+Thuppakki,6.2,17.6,135,22984,17300000.0,1,Cluster 1
+Mankatha,6.6,54.9,159,8404,42400000.0,2,Cluster 2
+Anniyan,7.4,21.5,177,3762,20800000.0,3,Cluster 3
+Ghilli,7.1,10.9,148,1699,4600000.0,1,Cluster 1
+Ratsasan,6.6,46.3,157,13140,1500000.0,1,Cluster 1
+Thani Oruvan,7.8,16.8,162,8242,5600000.0,3,Cluster 3
+Vada Chennai,6.0,108.7,142,6599,14600000.0,0,Cluster 0
+Pariyerum Perumal,6.6,117.7,154,18446,1800000.0,0,Cluster 0
+Karnan,6.9,96.2,150,12931,11300000.0,0,Cluster 0
+Maamanan,7.2,26.2,151,1815,14600000.0,1,Cluster 1
+Jigarthanda DoubleX,8.4,10.5,136,3488,7100000.0,3,Cluster 3
+Chithha,6.2,102.2,150,2785,23100000.0,0,Cluster 0
+Garudan,7.4,29.6,158,11398,2700000.0,3,Cluster 3
+Ayalaan,7.7,129.0,176,772,2200000.0,0,Cluster 0
+Captain Miller,5.7,126.0,167,7249,20500000.0,0,Cluster 0
+Lover,7.7,77.1,188,11999,11300000.0,3,Cluster 3
+Blue Star,6.1,22.2,136,17249,18500000.0,1,Cluster 1
+Maharaja,5.7,27.0,165,3849,9600000.0,1,Cluster 1
+GOAT,9.0,76.7,153,14274,5200000.0,3,Cluster 3
+Kanguva,9.1,23.3,189,1437,26600000.0,3,Cluster 3
+Indian 2,8.5,16.5,135,15489,25100000.0,3,Cluster 3
+Indian,6.6,38.5,134,1591,18800000.0,1,Cluster 1
+Baashha,5.9,106.3,139,4550,5800000.0,0,Cluster 0
+Padayappa,8.0,51.7,111,13268,14400000.0,1,Cluster 1
+Muthu,7.1,39.5,140,1799,7700000.0,1,Cluster 1
+Annamalai,6.0,13.6,136,2583,2400000.0,1,Cluster 1
+Thalapathi,7.3,43.4,152,10748,38400000.0,2,Cluster 2
+Nayakan,5.6,171.4,156,10684,3200000.0,0,Cluster 0
+Punnagai Mannan,8.9,15.3,183,8698,46000000.0,3,Cluster 3
+Agni Natchathiram,6.5,35.6,167,9972,9900000.0,1,Cluster 1
+Roja,8.0,83.5,139,6759,4100000.0,0,Cluster 0
+Bombay,6.7,57.3,133,2820,12700000.0,1,Cluster 1
+Iruvar,7.4,51.8,158,3893,31900000.0,2,Cluster 2
+Kannathil Muthamittal,7.5,52.4,126,2103,20800000.0,1,Cluster 1
+Alaipayuthey,6.2,25.6,182,19627,25600000.0,3,Cluster 3
+Vinnaithaandi Varuvaayaa,9.1,22.2,171,7504,17100000.0,3,Cluster 3
+Neethaane En Ponvasantham,8.4,68.0,141,4597,18700000.0,3,Cluster 3
+OK Kanmani,9.0,68.1,119,5459,29400000.0,3,Cluster 3
+Chekka Chivantha Vaanam,8.8,80.6,174,24042,5300000.0,3,Cluster 3
+I,7.7,95.6,147,1831,11100000.0,0,Cluster 0
+Theri,8.9,35.1,172,7559,4800000.0,3,Cluster 3
+Mersal,5.8,34.4,121,6139,66900000.0,2,Cluster 2
+Sarkar,6.2,66.0,139,8062,44300000.0,2,Cluster 2
+Bigil,5.7,46.7,150,646,1600000.0,1,Cluster 1
+Varisu,6.7,52.4,150,16953,19300000.0,1,Cluster 1
+Thunivu,6.9,65.6,141,22019,39900000.0,2,Cluster 2
+Valimai,6.5,87.3,161,7161,4000000.0,0,Cluster 0
+Viswasam,8.6,24.4,130,10042,13600000.0,3,Cluster 3
+Vivegam,6.8,26.5,147,20959,38100000.0,2,Cluster 2
+Vedalam,6.5,13.5,152,10327,1500000.0,1,Cluster 1
+Veeram,7.5,40.2,159,1824,18900000.0,1,Cluster 1
+Yennai Arindhaal,6.0,11.3,162,7369,6300000.0,1,Cluster 1
+Vaaranam Aayiram,8.5,31.9,129,7965,39700000.0,2,Cluster 2
+Ghajini,5.8,37.4,122,4914,54100000.0,2,Cluster 2
+Ayan,9.2,21.8,172,11167,44300000.0,3,Cluster 3
+Singam,8.4,41.3,155,22289,10600000.0,3,Cluster 3
+Singam II,6.2,11.1,136,21283,30700000.0,1,Cluster 1
+Singam 3,5.5,11.3,177,5294,28900000.0,1,Cluster 1
+24,8.5,70.5,152,1461,6800000.0,3,Cluster 3
+7 Aum Arivu,8.1,25.6,171,34013,27500000.0,3,Cluster 3
+Aalavandhan,8.2,14.8,151,15105,1600000.0,3,Cluster 3
+Hey Ram,8.4,35.9,187,1565,14600000.0,3,Cluster 3
+Virumandi,5.8,61.4,181,20790,4900000.0,3,Cluster 3
+Dasavathaaram,6.8,18.5,145,16815,2900000.0,1,Cluster 1
+Vishwaroopam,5.9,44.1,167,6352,2200000.0,1,Cluster 1
+Vishwaroopam 2,8.7,13.1,161,7657,18900000.0,3,Cluster 3
+Manmathan,7.8,11.9,174,4573,7200000.0,3,Cluster 3
+Vallavan,6.7,36.5,132,950,20400000.0,1,Cluster 1
+Silambattam,5.7,37.2,162,3766,2000000.0,1,Cluster 1
+Ko,6.7,45.5,169,13490,6700000.0,3,Cluster 3
+Payanam,6.7,55.3,118,537,12600000.0,1,Cluster 1
+VIP,8.2,140.3,128,3745,24500000.0,0,Cluster 0
+Velaiilla Pattadhari 2,7.9,35.4,113,4562,6800000.0,1,Cluster 1
+Maari,8.8,23.7,145,6667,15700000.0,3,Cluster 3
+Maari 2,7.2,65.5,162,20691,33600000.0,3,Cluster 3
+Don,5.9,21.1,177,3901,15400000.0,1,Cluster 1
+Doctor,8.1,30.2,151,3908,5000000.0,3,Cluster 3
+Prince,8.3,12.9,179,11200,1400000.0,3,Cluster 3
+Mandela,7.6,10.9,125,5315,31600000.0,1,Cluster 1
+Maaveeran,8.4,125.1,119,2535,1300000.0,0,Cluster 0
+Pichaikaaran,7.3,73.3,149,5318,32200000.0,2,Cluster 2
+Pichaikaaran 2,7.4,51.7,156,1714,12300000.0,1,Cluster 1
+Demonte Colony,7.1,28.4,149,2052,43000000.0,2,Cluster 2
+Demonte Colony 2,5.6,16.7,112,6019,25100000.0,1,Cluster 1
+Aranmanai,5.9,16.0,148,4843,93700000.0,2,Cluster 2
+Aranmanai 2,5.6,20.1,126,20206,7500000.0,1,Cluster 1
+Aranmanai 3,7.9,37.9,162,4100,22900000.0,3,Cluster 3
+Aranmanai 4,6.7,53.9,156,7451,8700000.0,1,Cluster 1
+Kanchana,7.4,47.8,133,8503,10800000.0,1,Cluster 1
+Kanchana 2,8.9,21.5,140,605,15800000.0,3,Cluster 3
+Kanchana 3,6.4,118.4,130,9214,32000000.0,0,Cluster 0
+Sathuranga Vettai,7.0,56.9,148,2068,63100000.0,2,Cluster 2
+Indru Netru Naalai,8.3,38.3,167,26467,22900000.0,3,Cluster 3
+Maayavan,6.3,43.1,132,1787,9100000.0,1,Cluster 1
+Dhuruvangal Pathinaaru,5.8,29.0,159,4784,9200000.0,1,Cluster 1
+Kuttram 23,6.6,20.0,140,1213,21100000.0,1,Cluster 1
+Thadam,6.1,25.4,135,46644,5100000.0,3,Cluster 3
+Por Thozhil,8.9,59.6,148,6080,2800000.0,3,Cluster 3
+Irugapatru,8.5,10.5,131,7738,7600000.0,3,Cluster 3
+Good Night,7.8,14.3,140,1055,6100000.0,1,Cluster 1
+Parking,8.7,11.6,128,11589,6300000.0,3,Cluster 3
+Kannagi,8.5,11.5,185,2384,5000000.0,3,Cluster 3
+Joe,6.2,77.7,150,18766,1600000.0,0,Cluster 0
+Dada,8.8,52.6,137,2336,1300000.0,3,Cluster 3
+Love Today,7.5,32.5,153,2192,67000000.0,2,Cluster 2
+LGM,8.5,13.6,147,797,9400000.0,3,Cluster 3
+Dragon,8.8,33.7,146,5610,8300000.0,3,Cluster 3
+Kudumbsthan,6.7,32.5,161,7156,18100000.0,1,Cluster 1
+Aaranya Kaandam,5.9,16.7,163,1043,4700000.0,1,Cluster 1
+Otta Seruppu Size 7,6.3,29.9,140,12452,45900000.0,2,Cluster 2
+Iravin Nizhal,7.1,27.8,139,5330,24200000.0,1,Cluster 1
+Kaala,8.5,43.5,145,6445,2400000.0,3,Cluster 3
+Petta,8.7,45.3,108,5149,9100000.0,1,Cluster 1
+Darbar,5.5,11.6,122,4596,32700000.0,1,Cluster 1
+Annaatthe,7.4,26.4,174,7061,44400000.0,2,Cluster 2
+Vettaiyan,7.0,44.4,179,1849,10400000.0,3,Cluster 3
+Coolie,6.3,34.5,145,2106,15300000.0,1,Cluster 1
+Viduthalai Part 1,5.9,77.9,160,16331,3700000.0,0,Cluster 0
+Viduthalai Part 2,6.7,47.6,155,23867,71900000.0,2,Cluster 2
+Billa,9.0,16.2,205,4238,5000000.0,3,Cluster 3
+Billa II,6.7,12.6,170,3025,43900000.0,2,Cluster 2
+Amarkalam,7.4,46.0,147,8762,16700000.0,1,Cluster 1
+Dheena,8.1,10.9,132,4703,15000000.0,1,Cluster 1
+Citizen,6.8,40.8,121,705,11800000.0,1,Cluster 1
+Red,9.1,108.6,153,1858,4900000.0,0,Cluster 0
+Villain,9.1,40.0,136,10569,3900000.0,3,Cluster 3
+Varalaru,6.4,27.2,124,9105,4700000.0,1,Cluster 1
+Attahasam,7.3,46.1,138,719,4100000.0,1,Cluster 1
+Ji,6.6,31.5,130,2507,23700000.0,1,Cluster 1
+Aegan,6.6,37.6,180,2602,7500000.0,1,Cluster 1
+Asal,5.6,109.3,165,9415,1900000.0,0,Cluster 0
+Aalwar,7.8,27.1,149,659,53200000.0,2,Cluster 2
+Kireedam,7.4,123.7,176,1379,33300000.0,0,Cluster 0
+M Kumaran S/O Mahalakshmi,5.7,92.5,151,13372,40400000.0,2,Cluster 2
+Santosh Subramaniam,6.5,17.6,134,2073,80200000.0,2,Cluster 2
+Velayudham,8.9,12.5,177,8961,3900000.0,3,Cluster 3
+Jilla,6.4,13.7,159,2676,8600000.0,1,Cluster 1
+Kaththi,6.0,10.6,131,1337,22300000.0,1,Cluster 1
+Puli,7.3,13.5,146,2728,18900000.0,1,Cluster 1
+Nanban,9.1,50.2,134,10748,3500000.0,3,Cluster 3
+Sachein,6.4,12.6,125,15986,26400000.0,1,Cluster 1
+Pokkiri,8.0,23.4,166,14686,4800000.0,3,Cluster 3
+Azhagiya Tamil Magan,8.3,75.2,184,4549,4800000.0,3,Cluster 3
+Kuruvi,6.4,10.8,124,9323,12500000.0,1,Cluster 1
+Villu,8.2,69.0,160,2335,14500000.0,3,Cluster 3
+Vettaikaaran,6.9,21.6,138,3275,14000000.0,1,Cluster 1
+Sura,7.8,14.4,141,18632,2400000.0,3,Cluster 3
+Friends,7.8,51.8,139,604,32500000.0,2,Cluster 2
+Badri,7.5,44.7,134,1215,5600000.0,1,Cluster 1
+Youth,5.8,83.5,150,2364,3100000.0,0,Cluster 0
+Vaseegara,8.6,56.5,135,715,33900000.0,2,Cluster 2
+Priyamanavale,6.7,66.9,154,2101,47700000.0,2,Cluster 2
+Kushi,6.2,21.6,149,7498,30700000.0,1,Cluster 1
+Thirumalai,5.7,16.8,145,4877,25900000.0,1,Cluster 1
+Udhaya,7.7,58.6,133,18354,17000000.0,3,Cluster 3
+Madurey,8.0,67.5,139,14105,13000000.0,3,Cluster 3
+Thirupaachi,5.6,173.0,163,3846,2400000.0,0,Cluster 0
+Sivakasi,7.4,28.6,159,2902,8900000.0,1,Cluster 1
+Aadhi,6.3,26.3,132,4320,8000000.0,1,Cluster 1
+Pithamagan,7.9,62.4,151,7638,5500000.0,3,Cluster 3
+Sethu,6.1,24.6,163,2996,20300000.0,1,Cluster 1
+Nanda,8.1,103.5,119,8328,11300000.0,0,Cluster 0
+Saamy,6.9,78.4,159,4713,2300000.0,0,Cluster 0
+Saamy Square,9.0,29.6,138,6924,4700000.0,3,Cluster 3
+Arul,6.0,58.6,160,5083,18200000.0,1,Cluster 1
+Bheema,6.8,59.2,136,3290,2200000.0,1,Cluster 1
+Raavanan,5.9,13.8,117,24222,29600000.0,1,Cluster 1
+Deiva Thirumagal,8.9,91.5,120,12038,11300000.0,0,Cluster 0
+Thaandavam,8.7,34.6,150,1707,10800000.0,3,Cluster 3
+David,6.5,71.3,154,16728,14500000.0,0,Cluster 0
+Iru Mugan,7.9,23.5,133,5846,27100000.0,1,Cluster 1
+Sketch,8.5,89.1,161,18496,7400000.0,3,Cluster 3
+Cobra,7.6,27.3,120,13369,18000000.0,1,Cluster 1
+Thangalaan,7.5,10.4,148,4930,13500000.0,1,Cluster 1
+Sardar,6.4,92.5,128,681,5700000.0,0,Cluster 0
+Japan,5.8,13.4,138,3003,32600000.0,1,Cluster 1
+Mark Antony,8.8,23.5,150,6740,24900000.0,3,Cluster 3
+DD Returns,8.8,114.9,134,8529,17100000.0,0,Cluster 0
+Anegan,7.8,115.3,143,2886,29500000.0,0,Cluster 0
+Kavan,6.8,39.8,168,1700,31300000.0,2,Cluster 2
+Maanaadu,6.8,45.0,139,14911,19500000.0,1,Cluster 1
+Pathu Thala,8.2,30.8,165,33784,28200000.0,3,Cluster 3
+Vendhu Thanindhathu Kaadu,8.8,22.1,129,6467,18900000.0,3,Cluster 3
+VTK,8.8,23.9,159,2006,18100000.0,3,Cluster 3
+Eeswaran,8.4,49.1,175,3043,15500000.0,3,Cluster 3
+Maanagaram,7.9,58.9,105,648,22000000.0,1,Cluster 1
+Monster,5.8,64.9,135,20155,3600000.0,1,Cluster 1
+Naaigal Jaathirathai,6.1,64.6,160,1502,32900000.0,2,Cluster 2
+Nimirnthu Nil,8.8,13.3,146,7373,31800000.0,3,Cluster 3
+Subramaniapuram,7.7,33.9,156,3062,1400000.0,3,Cluster 3
+Naadodigal,5.5,12.1,139,6962,27200000.0,1,Cluster 1
+Sundarapandian,5.9,37.9,151,8931,3100000.0,1,Cluster 1
+Varuthapadatha Valibar Sangam,8.0,30.4,147,14663,7100000.0,3,Cluster 3
+Rajini Murugan,5.5,86.5,171,2349,21400000.0,0,Cluster 0
+Seema Raja,6.1,25.1,154,588,3600000.0,1,Cluster 1
+Namma Veettu Pillai,7.5,14.4,156,1677,26600000.0,1,Cluster 1
+Lubber Pandhu,8.1,15.4,142,18922,27800000.0,3,Cluster 3
+Kottukkaali,7.9,60.2,141,17064,11600000.0,3,Cluster 3
+Meiyazhagan,6.3,43.7,142,7778,1100000.0,1,Cluster 1
+Black,8.1,13.7,157,7840,6100000.0,3,Cluster 3
+Bloody Beggar,6.4,13.1,142,9249,15400000.0,1,Cluster 1
+Brother,6.7,52.3,155,2042,60600000.0,2,Cluster 2
+Amaran,8.3,12.6,187,20165,16000000.0,3,Cluster 3
+Game Changer,7.9,70.4,165,4840,5500000.0,3,Cluster 3
